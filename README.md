@@ -1,1 +1,1325 @@
-# Data-Handling-Python
+# 🐍 Data Handling in Python – Clean, Transform, and Analyze
+
+Welcome to my **Data Handling in Python** project! This repository demonstrates advanced techniques in **data wrangling, preprocessing, and transformation** using Python libraries. The goal is to prepare messy, real-world datasets into clean, structured formats ready for analysis or machine learning.
+
+---
+
+## 📌 Project Description
+
+In this project, I showcase a complete pipeline for data handling with Python, using real datasets that contain inconsistencies, missing values, mixed data types, and more. The project explores best practices for:
+
+- Cleaning and preprocessing raw datasets
+- Reshaping and restructuring data
+- Handling missing and duplicate values
+- Encoding categorical variables
+- Combining multiple data sources
+
+The entire workflow is documented and executed in a **Jupyter Notebook** and is also compatible with **Google Colab**.
+
+---
+
+## 🧰 Tools & Technologies Used
+
+- **Python 3.11**
+- **Pandas** – DataFrames, merging, groupby, filtering, reshaping
+- **NumPy** – Efficient array operations, NaN handling
+- **OpenPyXL / xlrd** – Excel file manipulation
+- **Matplotlib & Seaborn** – Data quality and distribution visualization
+- **Google Colab / Jupyter Notebook** – Interactive development and documentation
+
+---
+
+## 🧠 Key Skills Demonstrated
+
+- **Data Cleaning**:
+  - Detecting and removing duplicates
+  - Imputing missing values (mean, median, mode, interpolation)
+  - Data type correction and formatting
+- **Data Transformation**:
+  - Encoding categorical variables (label, one-hot)
+  - Aggregating and grouping for insights
+  - Filtering and conditional selection
+- **Data Merging & Joins**:
+  - Merging multiple datasets using inner/outer joins
+  - Concatenation and restructuring
+- **Exploratory Analysis**:
+  - Using `.describe()`, `.value_counts()`, `.groupby()` to understand datasets
+- **Reshaping & Pivoting**:
+  - Creating pivot tables
+  - Melting and stacking data formats for analysis
+
+---
+
+## 🌟 Large Events & Highlights
+
+- 📁 **Processed multiple raw data files** (CSV, Excel) with mixed schemas
+- 🔍 **Identified and resolved over 1,000+ missing entries** using smart imputation
+- 🔄 **Transformed wide-format survey data** into tidy long format using `melt()` and `pivot_table()`
+- 🧠 **Automated data cleaning pipeline** for batch processing using reusable Python functions
+- 📊 **Visualized column distributions and null patterns** to guide cleaning strateg
+
+- 
+
+[Uploading Data handling 1 .ipynb…]({
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "af659e49",
+   "metadata": {},
+   "source": [
+    "# Cervical cancer data set"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "f791c4ae",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "from pandas import read_csv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "eddcd772",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Age</th>\n",
+       "      <th>Number of sexual partners</th>\n",
+       "      <th>First sexual intercourse</th>\n",
+       "      <th>Num of pregnancies</th>\n",
+       "      <th>Smokes</th>\n",
+       "      <th>Smokes (years)</th>\n",
+       "      <th>Smokes (packs/year)</th>\n",
+       "      <th>Hormonal Contraceptives</th>\n",
+       "      <th>Hormonal Contraceptives (years)</th>\n",
+       "      <th>IUD</th>\n",
+       "      <th>...</th>\n",
+       "      <th>STDs:HPV</th>\n",
+       "      <th>STDs: Number of diagnosis</th>\n",
+       "      <th>Dx:Cancer</th>\n",
+       "      <th>Dx:CIN</th>\n",
+       "      <th>Dx:HPV</th>\n",
+       "      <th>Dx</th>\n",
+       "      <th>Hinselmann</th>\n",
+       "      <th>Schiller</th>\n",
+       "      <th>Citology</th>\n",
+       "      <th>Biopsy</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>18</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>15.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.00</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>15</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>14.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.00</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>52</td>\n",
+       "      <td>5.0</td>\n",
+       "      <td>16.0</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>37.0</td>\n",
+       "      <td>37.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>3.00</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>46</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>21.0</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>15.00</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>42</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>23.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.00</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>663</th>\n",
+       "      <td>34</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>18.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.00</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>664</th>\n",
+       "      <td>32</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>19.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>8.00</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>665</th>\n",
+       "      <td>25</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>17.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>0.08</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>666</th>\n",
+       "      <td>33</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>24.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>0.08</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>667</th>\n",
+       "      <td>29</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>20.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>0.50</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>668 rows × 34 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "     Age  Number of sexual partners  First sexual intercourse  \\\n",
+       "0     18                        4.0                      15.0   \n",
+       "1     15                        1.0                      14.0   \n",
+       "2     52                        5.0                      16.0   \n",
+       "3     46                        3.0                      21.0   \n",
+       "4     42                        3.0                      23.0   \n",
+       "..   ...                        ...                       ...   \n",
+       "663   34                        3.0                      18.0   \n",
+       "664   32                        2.0                      19.0   \n",
+       "665   25                        2.0                      17.0   \n",
+       "666   33                        2.0                      24.0   \n",
+       "667   29                        2.0                      20.0   \n",
+       "\n",
+       "     Num of pregnancies  Smokes  Smokes (years)  Smokes (packs/year)  \\\n",
+       "0                   1.0     0.0             0.0                  0.0   \n",
+       "1                   1.0     0.0             0.0                  0.0   \n",
+       "2                   4.0     1.0            37.0                 37.0   \n",
+       "3                   4.0     0.0             0.0                  0.0   \n",
+       "4                   2.0     0.0             0.0                  0.0   \n",
+       "..                  ...     ...             ...                  ...   \n",
+       "663                 0.0     0.0             0.0                  0.0   \n",
+       "664                 1.0     0.0             0.0                  0.0   \n",
+       "665                 0.0     0.0             0.0                  0.0   \n",
+       "666                 2.0     0.0             0.0                  0.0   \n",
+       "667                 1.0     0.0             0.0                  0.0   \n",
+       "\n",
+       "     Hormonal Contraceptives  Hormonal Contraceptives (years)  IUD  ...  \\\n",
+       "0                        0.0                             0.00  0.0  ...   \n",
+       "1                        0.0                             0.00  0.0  ...   \n",
+       "2                        1.0                             3.00  0.0  ...   \n",
+       "3                        1.0                            15.00  0.0  ...   \n",
+       "4                        0.0                             0.00  0.0  ...   \n",
+       "..                       ...                              ...  ...  ...   \n",
+       "663                      0.0                             0.00  0.0  ...   \n",
+       "664                      1.0                             8.00  0.0  ...   \n",
+       "665                      1.0                             0.08  0.0  ...   \n",
+       "666                      1.0                             0.08  0.0  ...   \n",
+       "667                      1.0                             0.50  0.0  ...   \n",
+       "\n",
+       "     STDs:HPV  STDs: Number of diagnosis  Dx:Cancer  Dx:CIN  Dx:HPV  Dx  \\\n",
+       "0         0.0                          0          0       0       0   0   \n",
+       "1         0.0                          0          0       0       0   0   \n",
+       "2         0.0                          0          1       0       1   0   \n",
+       "3         0.0                          0          0       0       0   0   \n",
+       "4         0.0                          0          0       0       0   0   \n",
+       "..        ...                        ...        ...     ...     ...  ..   \n",
+       "663       0.0                          0          0       0       0   0   \n",
+       "664       0.0                          0          0       0       0   0   \n",
+       "665       0.0                          0          0       0       0   0   \n",
+       "666       0.0                          0          0       0       0   0   \n",
+       "667       0.0                          0          0       0       0   0   \n",
+       "\n",
+       "     Hinselmann  Schiller  Citology  Biopsy  \n",
+       "0             0         0         0       0  \n",
+       "1             0         0         0       0  \n",
+       "2             0         0         0       0  \n",
+       "3             0         0         0       0  \n",
+       "4             0         0         0       0  \n",
+       "..          ...       ...       ...     ...  \n",
+       "663           0         0         0       0  \n",
+       "664           0         0         0       0  \n",
+       "665           0         0         1       0  \n",
+       "666           0         0         0       0  \n",
+       "667           0         0         0       0  \n",
+       "\n",
+       "[668 rows x 34 columns]"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_cervix=read_csv('cervical_cancer.csv')\n",
+    "df_cervix"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "796cd660",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Age</th>\n",
+       "      <th>Number of sexual partners</th>\n",
+       "      <th>First sexual intercourse</th>\n",
+       "      <th>Num of pregnancies</th>\n",
+       "      <th>Smokes</th>\n",
+       "      <th>Smokes (years)</th>\n",
+       "      <th>Smokes (packs/year)</th>\n",
+       "      <th>Hormonal Contraceptives</th>\n",
+       "      <th>Hormonal Contraceptives (years)</th>\n",
+       "      <th>IUD</th>\n",
+       "      <th>...</th>\n",
+       "      <th>STDs:HPV</th>\n",
+       "      <th>STDs: Number of diagnosis</th>\n",
+       "      <th>Dx:Cancer</th>\n",
+       "      <th>Dx:CIN</th>\n",
+       "      <th>Dx:HPV</th>\n",
+       "      <th>Dx</th>\n",
+       "      <th>Hinselmann</th>\n",
+       "      <th>Schiller</th>\n",
+       "      <th>Citology</th>\n",
+       "      <th>Biopsy</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>18</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>15.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>15</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>14.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>52</td>\n",
+       "      <td>5.0</td>\n",
+       "      <td>16.0</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>37.0</td>\n",
+       "      <td>37.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>46</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>21.0</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>15.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>42</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>23.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>51</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>17.0</td>\n",
+       "      <td>6.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>34.0</td>\n",
+       "      <td>3.4</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>26</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>26.0</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>45</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>20.0</td>\n",
+       "      <td>5.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>44</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>26.0</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>2.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>27</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>17.0</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>1.0</td>\n",
+       "      <td>8.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>10 rows × 34 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   Age  Number of sexual partners  First sexual intercourse  \\\n",
+       "0   18                        4.0                      15.0   \n",
+       "1   15                        1.0                      14.0   \n",
+       "2   52                        5.0                      16.0   \n",
+       "3   46                        3.0                      21.0   \n",
+       "4   42                        3.0                      23.0   \n",
+       "5   51                        3.0                      17.0   \n",
+       "6   26                        1.0                      26.0   \n",
+       "7   45                        1.0                      20.0   \n",
+       "8   44                        3.0                      26.0   \n",
+       "9   27                        1.0                      17.0   \n",
+       "\n",
+       "   Num of pregnancies  Smokes  Smokes (years)  Smokes (packs/year)  \\\n",
+       "0                 1.0     0.0             0.0                  0.0   \n",
+       "1                 1.0     0.0             0.0                  0.0   \n",
+       "2                 4.0     1.0            37.0                 37.0   \n",
+       "3                 4.0     0.0             0.0                  0.0   \n",
+       "4                 2.0     0.0             0.0                  0.0   \n",
+       "5                 6.0     1.0            34.0                  3.4   \n",
+       "6                 3.0     0.0             0.0                  0.0   \n",
+       "7                 5.0     0.0             0.0                  0.0   \n",
+       "8                 4.0     0.0             0.0                  0.0   \n",
+       "9                 3.0     0.0             0.0                  0.0   \n",
+       "\n",
+       "   Hormonal Contraceptives  Hormonal Contraceptives (years)  IUD  ...  \\\n",
+       "0                      0.0                              0.0  0.0  ...   \n",
+       "1                      0.0                              0.0  0.0  ...   \n",
+       "2                      1.0                              3.0  0.0  ...   \n",
+       "3                      1.0                             15.0  0.0  ...   \n",
+       "4                      0.0                              0.0  0.0  ...   \n",
+       "5                      0.0                              0.0  1.0  ...   \n",
+       "6                      1.0                              2.0  1.0  ...   \n",
+       "7                      0.0                              0.0  0.0  ...   \n",
+       "8                      1.0                              2.0  0.0  ...   \n",
+       "9                      1.0                              8.0  0.0  ...   \n",
+       "\n",
+       "   STDs:HPV  STDs: Number of diagnosis  Dx:Cancer  Dx:CIN  Dx:HPV  Dx  \\\n",
+       "0       0.0                          0          0       0       0   0   \n",
+       "1       0.0                          0          0       0       0   0   \n",
+       "2       0.0                          0          1       0       1   0   \n",
+       "3       0.0                          0          0       0       0   0   \n",
+       "4       0.0                          0          0       0       0   0   \n",
+       "5       0.0                          0          0       0       0   0   \n",
+       "6       0.0                          0          0       0       0   0   \n",
+       "7       0.0                          0          1       0       1   1   \n",
+       "8       0.0                          0          0       0       0   0   \n",
+       "9       0.0                          0          0       0       0   0   \n",
+       "\n",
+       "   Hinselmann  Schiller  Citology  Biopsy  \n",
+       "0           0         0         0       0  \n",
+       "1           0         0         0       0  \n",
+       "2           0         0         0       0  \n",
+       "3           0         0         0       0  \n",
+       "4           0         0         0       0  \n",
+       "5           1         1         0       1  \n",
+       "6           0         0         0       0  \n",
+       "7           0         0         0       0  \n",
+       "8           0         0         0       0  \n",
+       "9           0         0         0       0  \n",
+       "\n",
+       "[10 rows x 34 columns]"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_cervix.head(10)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b8d3816f",
+   "metadata": {},
+   "source": [
+    "# Number of rows and columns in the dataset"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "fb4accb3",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Data frame has 668 rows\n"
+     ]
+    }
+   ],
+   "source": [
+    "no_rows=len(df_cervix)\n",
+    "print('Data frame has',no_rows,'rows')\n",
+    "          "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "ed483835",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Index(['Age', 'Number of sexual partners', 'First sexual intercourse',\n",
+      "       'Num of pregnancies', 'Smokes', 'Smokes (years)', 'Smokes (packs/year)',\n",
+      "       'Hormonal Contraceptives', 'Hormonal Contraceptives (years)', 'IUD',\n",
+      "       'IUD (years)', 'STDs', 'STDs (number)', 'STDs:condylomatosis',\n",
+      "       'STDs:cervical condylomatosis', 'STDs:vaginal condylomatosis',\n",
+      "       'STDs:vulvo-perineal condylomatosis', 'STDs:syphilis',\n",
+      "       'STDs:pelvic inflammatory disease', 'STDs:genital herpes',\n",
+      "       'STDs:molluscum contagiosum', 'STDs:AIDS', 'STDs:HIV',\n",
+      "       'STDs:Hepatitis B', 'STDs:HPV', 'STDs: Number of diagnosis',\n",
+      "       'Dx:Cancer', 'Dx:CIN', 'Dx:HPV', 'Dx', 'Hinselmann', 'Schiller',\n",
+      "       'Citology', 'Biopsy'],\n",
+      "      dtype='object')\n"
+     ]
+    }
+   ],
+   "source": [
+    "column_labels=df_cervix.columns\n",
+    "print(column_labels)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "74c37e5c",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Data frame has 34 columns\n"
+     ]
+    }
+   ],
+   "source": [
+    "no_columns= len(column_labels)\n",
+    "print('Data frame has',no_columns, 'columns')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "f0b74306",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Data frame has 668 rows and 34 columns\n"
+     ]
+    }
+   ],
+   "source": [
+    "df_cervix_shape=df_cervix.shape\n",
+    "print('Data frame has',df_cervix_shape[0],'rows and',df_cervix_shape[1],'columns')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "b36fbcbe",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Number of rows: 668\n",
+      "Number of columns: 34\n"
+     ]
+    }
+   ],
+   "source": [
+    "cervix_rows, cervix_cols = len(df_cervix), len(df_cervix.columns)\n",
+    "\n",
+    "print('Number of rows:', cervix_rows)\n",
+    "print('Number of columns:', cervix_cols)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "819deb65",
+   "metadata": {},
+   "source": [
+    "# Number of columns with floating point numbers(float64)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "id": "c41a6d15",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Age                                     int64\n",
+       "Number of sexual partners             float64\n",
+       "First sexual intercourse              float64\n",
+       "Num of pregnancies                    float64\n",
+       "Smokes                                float64\n",
+       "Smokes (years)                        float64\n",
+       "Smokes (packs/year)                   float64\n",
+       "Hormonal Contraceptives               float64\n",
+       "Hormonal Contraceptives (years)       float64\n",
+       "IUD                                   float64\n",
+       "IUD (years)                           float64\n",
+       "STDs                                  float64\n",
+       "STDs (number)                         float64\n",
+       "STDs:condylomatosis                   float64\n",
+       "STDs:cervical condylomatosis          float64\n",
+       "STDs:vaginal condylomatosis           float64\n",
+       "STDs:vulvo-perineal condylomatosis    float64\n",
+       "STDs:syphilis                         float64\n",
+       "STDs:pelvic inflammatory disease      float64\n",
+       "STDs:genital herpes                   float64\n",
+       "STDs:molluscum contagiosum            float64\n",
+       "STDs:AIDS                             float64\n",
+       "STDs:HIV                              float64\n",
+       "STDs:Hepatitis B                      float64\n",
+       "STDs:HPV                              float64\n",
+       "STDs: Number of diagnosis               int64\n",
+       "Dx:Cancer                               int64\n",
+       "Dx:CIN                                  int64\n",
+       "Dx:HPV                                  int64\n",
+       "Dx                                      int64\n",
+       "Hinselmann                              int64\n",
+       "Schiller                                int64\n",
+       "Citology                                int64\n",
+       "Biopsy                                  int64\n",
+       "dtype: object"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_cervix.dtypes"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "id": "49b89e97",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "There are 24 columns wih floating point numbers(float64)\n"
+     ]
+    }
+   ],
+   "source": [
+    "df_cervix_types=df_cervix.dtypes=='float64'\n",
+    "print('There are',df_cervix_types.sum(), 'columns wih floating point numbers(float64)')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "d5e94a04",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Age                                   False\n",
+       "Number of sexual partners              True\n",
+       "First sexual intercourse               True\n",
+       "Num of pregnancies                     True\n",
+       "Smokes                                 True\n",
+       "Smokes (years)                         True\n",
+       "Smokes (packs/year)                    True\n",
+       "Hormonal Contraceptives                True\n",
+       "Hormonal Contraceptives (years)        True\n",
+       "IUD                                    True\n",
+       "IUD (years)                            True\n",
+       "STDs                                   True\n",
+       "STDs (number)                          True\n",
+       "STDs:condylomatosis                    True\n",
+       "STDs:cervical condylomatosis           True\n",
+       "STDs:vaginal condylomatosis            True\n",
+       "STDs:vulvo-perineal condylomatosis     True\n",
+       "STDs:syphilis                          True\n",
+       "STDs:pelvic inflammatory disease       True\n",
+       "STDs:genital herpes                    True\n",
+       "STDs:molluscum contagiosum             True\n",
+       "STDs:AIDS                              True\n",
+       "STDs:HIV                               True\n",
+       "STDs:Hepatitis B                       True\n",
+       "STDs:HPV                               True\n",
+       "STDs: Number of diagnosis             False\n",
+       "Dx:Cancer                             False\n",
+       "Dx:CIN                                False\n",
+       "Dx:HPV                                False\n",
+       "Dx                                    False\n",
+       "Hinselmann                            False\n",
+       "Schiller                              False\n",
+       "Citology                              False\n",
+       "Biopsy                                False\n",
+       "dtype: bool"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df_cervix_types"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "28a7e456",
+   "metadata": {},
+   "source": [
+    "# Number of the subjects who are smokers"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "id": "ced6ae96",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "<class 'numpy.int64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.float64'>\n",
+      "<class 'numpy.int64'>\n",
+      "<class 'numpy.int64'>\n",
+      "<class 'numpy.int64'>\n",
+      "<class 'numpy.int64'>\n",
+      "<class 'numpy.int64'>\n",
+      "<class 'numpy.int64'>\n",
+      "<class 'numpy.int64'>\n",
+      "<class 'numpy.int64'>\n",
+      "<class 'numpy.int64'>\n"
+     ]
+    }
+   ],
+   "source": [
+    "for col in df_cervix:\n",
+    "\n",
+    "    print(type(df_cervix[col][0]))\n",
+    "\n",
+    "\n",
+    "cervix_smoker = df_cervix['Smokes'] == 1.0\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "id": "b0c1d7b8",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "There are 96 smokers.\n"
+     ]
+    }
+   ],
+   "source": [
+    "print('There are', cervix_smoker.sum(), 'smokers.')\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "dce259fd",
+   "metadata": {},
+   "source": [
+    "# percentage of smokers"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "id": "823f334f",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "This is 14.4 % of the total.\n"
+     ]
+    }
+   ],
+   "source": [
+    "print('This is', round(100*cervix_smoker.sum() / cervix_rows, 1), '% of the total.')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "87690345",
+   "metadata": {},
+   "source": [
+    "# Age distribution"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "id": "c3b49a5d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from matplotlib.pyplot import subplots, show"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "id": "083a26f7",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "fig, ax = subplots()\n",
+    "ax.hist(df_cervix['Age'], bins=50)\n",
+    "ax.set_xlabel('Age', fontsize=20)\n",
+    "ax.set_ylabel('Count', fontsize=20)\n",
+    "ax.set_title('Age distribution of subjects',  fontsize=24);\n",
+    "show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ee814ce7",
+   "metadata": {},
+   "source": [
+    "# Mean and standard distribution of age first sexual intercourse"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "id": "874e186a",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Mean of age of first sexual intercourse:  17.1\n",
+      "Standard distribution of age of first sexual intercourse:  2.9\n"
+     ]
+    }
+   ],
+   "source": [
+    "int_mean = df_cervix['First sexual intercourse'].mean()\n",
+    "\n",
+    "int_std = df_cervix['First sexual intercourse'].std()\n",
+    "\n",
+    "print('Mean of age of first sexual intercourse: ', round(int_mean, 1))\n",
+    "print('Standard distribution of age of first sexual intercourse: ', round(int_std, 1))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "fbb3b34f",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.7"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
+)
